@@ -5,6 +5,7 @@ import imutils
 import time
 import cv2
 from picamera import PiCamera
+from picamera.array import PiRGBArray
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
@@ -14,7 +15,7 @@ args = vars(ap.parse_args())
 
 # if the video argument is None, then we are reading from webcam
 if args.get("video", None) is None:
-    camera = PiCamara()
+    camera = PiCamera()
     camera.resolution = (640, 480)
     camera.framerate = 30
     rawCapture = PiRGBArray(camera, size=(640, 480))
@@ -24,8 +25,8 @@ if args.get("video", None) is None:
 else:
     camera = cv2.VideoCapture(args["video"])
     # initialize the first frame in the video stream
-    firstFrame = None
 
+firstFrame = None
 # loop over the frames of the video
 for image in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
     # grab the current frame and initialize the occupied/unoccupied
@@ -91,5 +92,5 @@ for image in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
             break
 
         # cleanup the camera and close any open windows
-        camera.release()
+        # camera.release()
         cv2.destroyAllWindows()
