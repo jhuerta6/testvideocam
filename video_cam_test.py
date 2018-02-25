@@ -33,16 +33,8 @@ for image in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
     # text
     #frame = camera.read()
     frame = image.array
-    text = "Unoccupied"
-
-    # if the frame could not be grabbed, then we have reached the end
-    # of the video
-    key = cv2.waitKey(1) & 0xFF
 
     rawCapture.truncate(0)
-
-    if key == ord("q"):
-        break
 
     # resize the frame, convert it to grayscale, and blur it
     frame = imutils.resize(frame, width=500)
@@ -64,6 +56,7 @@ for image in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
     (cnts, _) = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
                                  cv2.CHAIN_APPROX_SIMPLE)
 
+    changeFrame = None
     # loop over the contours
     for c in cnts:
         # if the contour is too small, ignore it
@@ -74,17 +67,14 @@ for image in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
         # and update the text
         (x, y, w, h) = cv2.boundingRect(c)
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-        text = "Occupied"
-    # draw the text and timestamp on the frame
-    cv2.putText(frame, "Room Status: {}".format(text), (10, 20),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-    cv2.putText(frame, datetime.datetime.now().strftime("%A %d %B %Y %I:%M:%S%p"),
-                (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+        changeFrame = frame[y:y+h, x:x+w]
+
 
     # show the frame and record if the user presses a key
     cv2.imshow("Security Feed", frame)
     cv2.imshow("Thresh", thresh)
     cv2.imshow("Frame Delta", frameDelta)
+    cv2.imshow("change", changeFrame)
     key = cv2.waitKey(1) & 0xFF
 
     # if the `q` key is pressed, break from the lop
