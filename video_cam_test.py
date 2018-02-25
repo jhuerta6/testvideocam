@@ -74,7 +74,8 @@ for image in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
     cv2.imshow("Security Feed", frame)
     cv2.imshow("Thresh", thresh)
     cv2.imshow("Frame Delta", frameDelta)
-    cv2.imshow("change", changeFrame)
+    if changeFrame is not None:
+        cv2.imshow("change", changeFrame)
     key = cv2.waitKey(1) & 0xFF
 
     # if the `q` key is pressed, break from the lop
